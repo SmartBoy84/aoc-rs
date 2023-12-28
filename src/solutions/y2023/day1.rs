@@ -18,7 +18,7 @@ fn get_sum(input: &str, part2: bool) -> usize {
                     }),
                     _ => None,
                 });
-            let a = digits.next().expect(&format!("Ay yo, no digits?! -> {}", line));
+            let a = digits.next().expect(&format!("Ay yo, no digits?! -> {}", line)); 
             let b = digits.last().unwrap_or(a); // yuck, actual loop stuff
             a * 10 + b
         })
