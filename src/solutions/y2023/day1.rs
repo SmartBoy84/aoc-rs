@@ -1,15 +1,14 @@
-use super::*;
-
-const NUM_MAP: [&str; 10] = [
-    "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
+const NUM_MAP: [&str; 9] = [
+    "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
 ];
 
-fn get_sum(input: &str, part2: bool) -> usize {
+fn get_sum(input: &[&str], part2: bool) -> usize {
     input
-        .split("\n")
+        .iter()
         .map(|line| {
             let mut digits = line
-                .bytes()
+                .as_bytes()
+                .iter()
                 .enumerate()
                 .filter_map(|(index, char)| match char {
                     b'0'..=b'9' => Some((char - b'0') as usize),
@@ -18,19 +17,14 @@ fn get_sum(input: &str, part2: bool) -> usize {
                     }),
                     _ => None,
                 });
-            let a = digits.next().expect(&format!("Ay yo, no digits?! -> {}", line)); 
-            let b = digits.last().unwrap_or(a); // yuck, actual loop stuff
-            a * 10 + b
+                let a = digits.next().unwrap();
+                let b = digits.nth_back(0).unwrap_or(a);
+                a * 10 + b
         })
         .sum()
 }
 
-pub fn main() -> Result<()> {
-    let input = get_input(1, 2023)?;
-    let input = input.trim();
-
-    println!("Part 1: {}", get_sum(input, false));
-    println!("Part 2: {}", get_sum(input, true));
-
-    Ok(())
+pub fn main(input: &str) -> (usize, usize) {
+    let input: Vec<_> = input.lines().collect();
+    (get_sum(&input, false), get_sum(&input, true))
 }

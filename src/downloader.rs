@@ -38,17 +38,18 @@ impl std::error::Error for InputGetError {}
 
 pub fn get_input(day: u32, year: u32) -> AoCResult<String> {
     let file_name = format!("{}/{}/{}.txt", STORAGE, year, day);
-    match fs::read_to_string(&file_name) {
-        Ok(data) => Ok(data),
+    let data = match fs::read_to_string(&file_name) {
+        Ok(data) => data,
         Err(e) => match e.kind() {
             ErrorKind::NotFound => {
                 let data = download(day, year)?;
                 save(&data, &file_name)?;
-                return Ok(data);
+                data
             }
             _ => return Err(InputGetError::WriteError(e)),
         },
-    }
+    };
+    Ok(data.trim().to_string())
 }
 
 fn save(data: &str, name: &str) -> AoCResult<()> {

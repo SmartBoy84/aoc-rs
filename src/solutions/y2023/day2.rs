@@ -3,8 +3,8 @@ use super::*;
 // ["red", "green", "blue"]; => reference
 // readability?? Pshaw!
 
-pub fn main() -> Result<()> {
-    let input: Vec<_> = get_input(2, 2023)?
+pub fn main(input: &str) -> (usize, u32) {
+    let input: Vec<_> = input
         .trim()
         .split("\n")
         .map(|line| {
@@ -21,7 +21,7 @@ pub fn main() -> Result<()> {
                             "red" => acc[0].push(val),
                             "green" => acc[1].push(val),
                             "blue" => acc[2].push(val),
-                            _ => println!("Uh..."),
+                            _ => unreachable!(),
                         }
                     }
                     acc
@@ -55,8 +55,5 @@ pub fn main() -> Result<()> {
         })
         .sum::<u32>();
 
-    println!("{:?}", part1);
-    println!("{:?}", part2);
-
-    Ok(())
+    (part1, part2)
 }
