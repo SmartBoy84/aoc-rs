@@ -18,5 +18,5 @@ fn bench<T: Debug, U: Debug>(runner: fn(&str) -> (T, U), input: &str) {
 }
 
 fn main() {
-    bench(y2022::day1::main, &get_input(2, 2023).unwrap());
+    bench(y2022::day1::main, &get_input(1, 2022).unwrap());
 }

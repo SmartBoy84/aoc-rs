@@ -65,11 +65,14 @@ fn save(data: &str, name: &str) -> AoCResult<()> {
 
 fn download(day: u32, year: u32) -> AoCResult<String> {
     println!("Downloading input data...");
+
+    let Ok(token) = fs::read_to_string(API_KEY_PATH) else {
+        println!("Token file \"{API_KEY_PATH}\" not found");
+        std::process::exit(-1)
+    };
+
     let input = ureq::get(&format!("{}/{}/day/{}/input", BASE_URL, year, day))
-        .set(
-            "Cookie",
-            &format!("session={}", fs::read_to_string(API_KEY_PATH)?),
-        )
+        .set("Cookie", &format!("session={}", token))
         .call()?
         .into_string()?;
     Ok(input)
