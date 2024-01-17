@@ -1,3 +1,9 @@
+type Stack = Vec<Vec<char>>;
+
+fn extract_id(stack: Stack) -> String {
+    stack.iter().map(|a| a.last().unwrap()).collect::<String>()
+}
+
 pub fn main(input: &str) -> (String, String) {
     let (stack, instructions) = input.split_once("\n\n").unwrap();
 
@@ -54,6 +60,7 @@ pub fn main(input: &str) -> (String, String) {
 
     let mut part2 = stack;
     let part2_mut: &mut Vec<Vec<char>> = unsafe { std::mem::transmute(&mut part2 as *mut _) }; // desperate times, desperate measures
+
     // the above is not only unsafe in the literal sense but also in that it's not intended, so it may be "fixed" at any time? (apparently)
 
     for [n, from, to] in instructions {
@@ -62,12 +69,9 @@ pub fn main(input: &str) -> (String, String) {
             part1[to - 1].push(val);
         }
 
-        let start = part2.len() - n;
+        let start = part2[from - 1].len() - n;
         part2[to - 1].extend(part2_mut[from - 1].drain(start..));
     }
 
-    let part1 = part1.iter().map(|a| a.last().unwrap()).collect::<String>();
-    // let part2 = part2.iter().map(|a| a.last().unwrap()).collect::<String>();
-
-    (part1, "hey".to_string())
+    (extract_id(part1), extract_id(part2))
 }
