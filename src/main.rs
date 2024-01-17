@@ -1,22 +1,12 @@
 pub mod downloader;
+use downloader::get_input;
 
 pub mod solutions;
-use downloader::get_input;
 use solutions::*;
 
-use std::{fmt::Debug, time};
-// use std::fmt::Debug
-
-fn bench<T: Debug, U: Debug>(runner: fn(&str) -> (T, U), input: &str) {
-    let start = time::Instant::now();
-    let (x, y) = runner(input);
-    let time_taken = start.elapsed();
-    println!(
-        "Part 1: {:?}\nPart 2: {:?}\nTime taken: {:?}",
-        x, y, time_taken
-    );
-}
+pub mod parse_utils;
+use parse_utils::*;
 
 fn main() {
-    bench(y2022::day1::main, &get_input(1, 2022).unwrap());
+    bench(y2022::day5::main, &get_input(5, 2022).unwrap())
 }
