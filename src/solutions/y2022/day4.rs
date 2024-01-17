@@ -1,3 +1,5 @@
+use crate::parse_utils;
+
 pub fn main(input: &str) -> (usize, usize) {
     // manual parsing for those precious microseconds!
     let input = input

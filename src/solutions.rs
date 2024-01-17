@@ -1,8 +1,6 @@
 pub mod y2023;
 pub mod y2022;
 
-use crate::parse_utils;
-
 use std::{fmt::Debug, time};
 
 pub fn bench<T: Debug, U: Debug>(runner: fn(&str) -> (T, U), input: &str) {
