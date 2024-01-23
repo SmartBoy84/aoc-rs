@@ -8,7 +8,7 @@ pub fn main(input: &str) -> (u32, usize) {
             let mut x = a.split("|").map(|b| b.split_whitespace());
             let check = x.next().unwrap().collect::<Vec<_>>();
             let cards = x.next().unwrap();
-            cards.filter(move |b| check.contains(b)).count()
+            cards.filter(|b| check.contains(b)).count()
         })
         .enumerate()
         .for_each(|(x, won)| {
