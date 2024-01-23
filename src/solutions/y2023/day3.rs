@@ -10,7 +10,7 @@ pub fn main(input: &str) -> (usize, usize) {
         .iter()
         .enumerate()
         .filter(|(_, &c)| !matches!(c, b'.' | b'0'..=b'9' | b'\n'))
-        .map(|(i, c)| {
+        .map(|(i, _)| {
             (-1..=1) // up, middle, bottom
                 .map(move |a| {
                     (i as isize - (line_len * a) - 1..) // get a range starting from the far left
