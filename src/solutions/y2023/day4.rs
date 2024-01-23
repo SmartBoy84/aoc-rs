@@ -13,7 +13,7 @@ pub fn main(input: &str) -> (u32, usize) {
         .enumerate()
         .for_each(|(x, won)| {
             part1 += if won != 0 { 1 << (won - 1) } else { 0 }; // no need to do inefficient pow, binary is already base 2!
-            for y in x + 1..x + 1 + won {
+            for y in (x + 1..).take(won) {
                 arr[y] += arr[x];
             }
         });
