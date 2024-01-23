@@ -1,59 +1,68 @@
-/* INCOMPLETE FOR NOW */
+use std::ops::RangeInclusive;
 
-use super::*;
+pub fn main(input: &str) -> (usize, usize) {
+    // (start, len)
 
-fn part1(input: &str, line_length: usize) -> u32 {
-    let mut popper: (Option<String>, bool) = (None, false);
-    let mut collector = vec![];
+    let input = input.as_bytes();
+    let line_len = input.iter().take_while(|&&a| a != b'\n').count() as isize + 1;
 
-    for (index, point) in input.char_indices() {
-        if point.is_digit(10) {
-            if let Some(val) = &mut popper.0 {
-                val.push(point);
-            } else {
-                popper.0 = Some(String::from(point));
-            }
-
-            for y in -1..=1 {
-                if input
-                    .get(
-                        (index as i32 - (line_length as i32 * y) - 1)
-                            .try_into()
-                            .unwrap_or(0)..,
-                    )
-                    .and_then(|x| {
-                        x.chars()
-                            .take(3)
-                            .take_while(|char| char == &('\n' as char))
-                            .find(|x| !matches!(x, '0'..='9' | '.'))
-                    })
-                    .is_some()
-                {
-                    popper.1 = true;
-                }
-            }
-        } else if let Some(_) = popper.0 {
-            let num = popper.0.take().unwrap();
-            if popper.1 {
-                collector.push(num);
-            }
-            popper.1 = false;
-        }
-    }
-    println!("{:?}", collector);
-
-    collector
+    let gear_or_part = input
         .iter()
-        .map(|x| str::parse::<u32>(x).unwrap())
-        .sum::<u32>()
-}
+        .enumerate()
+        .filter(|(_, &c)| !matches!(c, b'.' | b'0'..=b'9' | b'\n'))
+        .map(|(i, c)| {
+            (-1..=1) // up, middle, bottom
+                .map(move |a| {
+                    (i as isize - (line_len * a) - 1..) // get a range starting from the far left
+                        .take(3) // we want the "outline" around the special character
+                        .map(|b| b as usize) // uh, idk
+                        .skip_while(|&b| !matches!(input.get(b), Some(_))) // account for end/start of text
+                        .take_while(|&b| input[b] != b'\n') // account for end of line
+                        .filter(|&b| {
+                            b != i // remove self character
+                    && input[b].is_ascii_digit() // ensure we are in a number
+                        })
+                        .fold(Vec::new(), |mut acc: Vec<_>, x| {
+                            // ensure not part of already found number
+                            if let Some(_) = acc
+                                .iter()
+                                .rev()
+                                .find(|c: &&RangeInclusive<_>| c.contains(&x))
+                            {
+                                return acc;
+                            }
 
-pub fn main(input: &str) -> Result<()> {
-    let input = get_input(3, 2023)?;
-    let line_length = input.split("\n").next().unwrap().len();
+                            // find the start of this number
+                            let start = x - input[..=x]
+                                .iter()
+                                .rev()
+                                .take_while(|c| c.is_ascii_digit())
+                                .enumerate()
+                                .map(|(i, _)| i)
+                                .last()
+                                .unwrap();
 
-    println!("{}", part1(&input, line_length));
-    panic!("Part 2 not done yet");
-    // part1(&input, line_length);
-    Ok(())
+                            // find it's total length
+                            let len = (start..)
+                                .take_while(|&b| matches!(input.get(b), Some(b'0'..=b'9')))
+                                .count();
+
+                            acc.push(start..=start + len - 1);
+                            acc
+                        })
+                })
+                .flatten()
+                .map(|a| a.fold(0, |acc, x| (acc * 10) + (input[x] - b'0') as usize))
+                .collect::<Vec<_>>()
+        })
+        .collect::<Vec<_>>();
+
+    // while the above code would cause numbers to be dumplicated if they appear next to multiple "special chars", that doesn't seem to be the case here thankfully
+    let part1 = gear_or_part.iter().map(|a| a.iter()).flatten().sum();
+    let part2 = gear_or_part
+        .iter()
+        .filter_map(|a| (a.len() > 1).then_some(a.iter().fold(1, |acc, x| acc * x)))
+        .sum();
+
+    (part1, part2)
 }

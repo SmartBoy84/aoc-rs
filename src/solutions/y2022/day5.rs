@@ -25,7 +25,7 @@ pub fn main(input: &str) -> (String, String) {
         - b'0';
 
     // extract initial stack state
-    let mut stack = stack.fold(vec![Vec::new(); len as usize], |mut acc, x| {
+    let stack = stack.fold(vec![Vec::new(); len as usize], |mut acc, x| {
         for (i, a) in x.as_bytes().chunks(4).enumerate() {
             if a[1].is_ascii_alphabetic() {
                 acc[i].push(a[1] as char);

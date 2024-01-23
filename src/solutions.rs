@@ -1,7 +1,11 @@
-pub mod y2023;
 pub mod y2022;
+pub mod y2023;
 
-use std::{fmt::Debug, time};
+use std::{
+    collections::HashMap,
+    fmt::{Debug, Display},
+    time,
+};
 
 pub fn bench<T: Debug, U: Debug>(runner: fn(&str) -> (T, U), input: &str) {
     let start = time::Instant::now();

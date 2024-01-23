@@ -1,4 +1,4 @@
-// the solution in use was *heavily inspired from the one on ManEatingApe's repo
+// the solution in use was *heavily inspired (aka copied) from the one on ManEatingApe's repo
 fn find_index_packet(input: &str, marker: usize) -> usize {
     let mut window_start = 0;
     let mut seen = [0; 26];
