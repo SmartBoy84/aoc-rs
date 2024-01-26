@@ -2,4 +2,4 @@
 
 pub mod solutions;
 pub mod downloader;
-pub mod parse_utils;
+pub mod utils;
