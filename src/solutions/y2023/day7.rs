@@ -81,22 +81,27 @@ pub fn main(input: &str) -> (usize, usize) {
     sort_by_rank(&mut cards, false);
     let part1 = deck_value(&cards);
 
+    // promote rank due to joker inclusion
     for (rank, name, _) in &mut cards {
-        // promote rank due to joker inclusion
-        for _ in name.chars().filter(|&a| a == 'J') {
+        let jokers = name.chars().filter(|&a| a == 'J').count();
+        if jokers > 0 {
             *rank = match *rank {
                 6 => 7,
-                5 | 4 => 6,
-                3 => 5,
+                5 => 7,
+                4 => 6,
+                3 => match jokers {
+                    // ay yo, special case took forever to figure out
+                    2 => 6,
+                    _ => 5,
+                },
                 2 => 4,
                 1 => 2,
                 x => x,
-            };
+            }
         }
     }
     sort_by_rank(&mut cards, true);
     let part2 = deck_value(&cards);
-    println!("{:?}", cards);
 
     (part1, part2)
 }
