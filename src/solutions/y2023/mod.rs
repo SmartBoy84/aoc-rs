@@ -8,3 +8,4 @@ pub mod day5;
 pub mod day6; /* INCOMPLETE */
 pub mod day7; /* Favourite day */
 pub mod day8;
+pub mod day9;

@@ -25,9 +25,9 @@ pub fn main(input: &str) -> (u64, u64) {
             acc
         });
 
-    let distances = (0..starting_points.len())
-        .zip(starting_points.iter())
-        .map(|(_, &a)| {
+    let distances = starting_points
+        .iter()
+        .map(|&a| {
             let mut instructions = instructions.chars().cycle().zip(0..);
             let mut current = a;
             for (inst, _) in instructions.by_ref() {
