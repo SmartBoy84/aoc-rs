@@ -1,6 +1,5 @@
 // p1: 7145
 // p2: 445
-
 #[derive(PartialEq, Debug, Clone, Copy)]
 enum Direction {
     Up,
@@ -59,16 +58,34 @@ fn find_next(
         .find_map(|(idx, _)| get_dir(input, idx, target_dir)) // ensure the item in this ideal direction has the correct slot for us
 }
 
+fn print_path(input: &[u8], path: &Vec<(usize, usize)>) {
+    println!(
+        "{}",
+        input
+            .iter()
+            .map(|&c| c as char)
+            .enumerate()
+            .map(|(i, c)| {
+                if c == '\n' || path.iter().any(|(idx, _)| *idx == i) {
+                    c
+                } else {
+                    '.'
+                }
+            })
+            .collect::<String>()
+    );
+}
+
 pub fn main(input: &str) -> (usize, usize) {
     let bytes = input.as_bytes();
-    let start = bytes.iter().position(|&c| c == b'S').unwrap();
+    let start = bytes.iter().position(|&c| c == b'S').expect("no 'S'??");
     let line_len = bytes.iter().take_while(|&&c| c != b'\n').count() + 1;
 
     let branches = get_around(bytes, start, line_len)
         .filter_map(|(i, dir)| get_dir(bytes, i, dir))
         .collect::<Vec<_>>();
 
-    let mut path_map = vec![];
+    let mut path_map = vec![(start % line_len, start / line_len)]; // integer division always truncating (simply pop of the shizzle after decimal so round down)
     let mut seen_ends = vec![];
 
     for path in branches {
@@ -76,18 +93,33 @@ pub fn main(input: &str) -> (usize, usize) {
         if seen_ends.contains(&current.0) {
             break;
         }
-        path_map.clear();
+        path_map.truncate(1);
+
         loop {
-            path_map.push(current.0);
+            path_map.push((current.0 % line_len, current.0 / line_len));
             if let Some(point) = find_next(current, bytes, line_len) {
                 current = point;
             } else {
                 break;
             }
         }
-        seen_ends.push(*path_map.last().unwrap());
+        seen_ends.push(current.0);
     }
-    let p1 = (path_map.len() + 1) / 2;
 
+    // print_path(bytes, &path_map);
+    // path_map.reverse();
+    // let p2 = path_map
+    //     .iter()
+    //     .map(|a| (a.0 as isize, a.1 as isize))
+    //     .collect::<Vec<_>>()
+    //     .windows(2)
+    //     .fold(0, |acc, matrix| {
+    //         acc + (matrix[0].0 * matrix[1].1) - (matrix[1].0 * matrix[0].1)
+    //     })
+    //     / 2;
+    // println!("{}", p2.abs() - (path_map.len() / 2) as isize);
+
+    let p1 = path_map.len() / 2;
+    todo!("can't figure out part 2 :(");
     (p1, 0)
 }

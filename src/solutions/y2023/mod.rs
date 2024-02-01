@@ -6,5 +6,6 @@ pub mod day5;
 pub mod day6; /* INCOMPLETE */
 pub mod day7; /* Favourite day */
 pub mod day8;
-pub mod day9; // ughhh
-pub mod day10;
+pub mod day9; // ughhh - mank
+pub mod day10; // part 2 incomplete
+pub mod day11;
