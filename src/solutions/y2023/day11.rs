@@ -1,5 +1,3 @@
-use std::cmp::Ordering;
-
 /*
  the wording in this is absolute shit
 He says each unoccupied row/column expands to "twice as big"
@@ -15,14 +13,25 @@ pub fn bresenham(((x1, y1), (x2, y2)): ((usize, usize), (usize, usize))) -> usiz
 }
 
 pub fn find_dists(
-    galaxy_pairs: &Vec<((usize, usize, usize), (usize, usize, usize))>,
+    galaxies: &Vec<(usize, usize)>,
+    col: &Vec<usize>,
+    row: &Vec<usize>,
     expansion: usize,
 ) -> usize {
+    let mut galaxies = galaxies.clone(); // I'm not proud of this and I could do a better way but that unecessarily convolute as solution that is already good and fast (~200us overall) as it is
     let expansion = expansion - 1;
 
-    galaxy_pairs
+    for (x, y) in galaxies.iter_mut() {
+        *x += col[..*x].iter().filter(|k| **k == 1).count() * expansion;
+        *y += row[..*y].iter().filter(|k| **k == 1).count() * expansion;
+    }
+
+    galaxies
         .iter()
-        .map(|((x1, x2, x_i), (y1, y2, y_i))| x2 - x1 + y2 - y1 + ((x_i + y_i) * expansion))
+        .enumerate()
+        .map(|(idx, &p1)| galaxies[idx + 1..].iter().map(move |&p2| (p1, p2)))
+        .flatten()
+        .map(|((x1, y1), (x2, y2))| x1.abs_diff(x2) + y1.abs_diff(y2))
         .sum()
 }
 
@@ -51,34 +60,8 @@ pub fn main(input: &str) -> (usize, usize) {
         }
     }
 
-    let galaxy_pairs = galaxies
-        .iter()
-        .enumerate()
-        .map(|(idx, &(x1, y1))| {
-            galaxies[idx + 1..].iter().map(move |&(x2, y2)| {
-                (
-                    match x1.cmp(&x2) {
-                        Ordering::Less => (x1, x2),
-                        _ => (x2, x1),
-                    },
-                    match y1.cmp(&y2) {
-                        Ordering::Less => (y1, y2),
-                        _ => (y2, y1),
-                    },
-                )
-            })
-        })
-        .flatten()
-        .map(|((x1, x2), (y1, y2))| {
-            (
-                (x1, x2, col[x1..x2].iter().filter(|k| **k == 1).count()),
-                (y1, y2, row[y1..y2].iter().filter(|k| **k == 1).count()),
-            )
-        })
-        .collect::<Vec<_>>();
-
-    let p1 = find_dists(&galaxy_pairs, 2);
-    let p2 = find_dists(&galaxy_pairs, 1000000);
+    let p1 = find_dists(&galaxies, &col, &row, 2);
+    let p2 = find_dists(&galaxies, &col, &row, 1000000);
 
     (p1, p2)
 }
