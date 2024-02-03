@@ -10,9 +10,8 @@ fn find_permutations(map: &[u8], groups: &[usize]) -> usize {
     for i in (0..map.len())
         .filter(|i| map[*i] != b'.') // we can skip over '.' chunks as they can't comprise a group
         .take_while(|i| map.len() - *i >= remaining)
-    // remaining bit must be able to fit total remaining chunks + enough space for the smallest gap between them (a single space)
+    // remaining section must be able to fit total remaining chunks + enough space for the smallest gap between them (a single space)
     {
-        println!("{:?} {:?}", &map[i..], groups);
         let end = i + my_group; // +1 to ensure that EOL error causes break here rather than panic!
         if matches!(map.get(end), Some(b'.' | b'?') | None) // cursor is on potentially start of next group
             && map[i..]
@@ -21,14 +20,17 @@ fn find_permutations(map: &[u8], groups: &[usize]) -> usize {
                 .count()
                 >= my_group
         {
-            ways += if groups.len() == 1 {
-                println!("Here");
-                1
+            if groups.len() == 1 {
+                // must ensure that if this is the last group then we only consider it's search section as valid if no # linger beyond it
+                if !map[end..].iter().any(|c| *c == b'#') {
+                    ways += 1
+                }
             } else {
-                find_permutations(&map[end..], &groups[1..])
+                ways += find_permutations(&map[end + 1..], &groups[1..])
             }
         }
 
+        // once # crossed, iteration must stop as this point HAS to be the start at this stage
         if map[i] == b'#' {
             break; // since this '#' must comprise this group
         }
@@ -50,9 +52,13 @@ pub fn main(input: &str) -> (usize, usize) {
 
     let p1 = input
         .iter()
-        .map(|(map, alt)| find_permutations(&map, &alt))
-        .collect::<Vec<_>>();
+        .map(|(map, alt)| {
+            let ways = find_permutations(&map, &alt);
+            let name = map.iter().map(|a| *a as char).collect::<String>();
+            println!("{} {ways}", name);
+            ways
+        })
+        .sum();
 
-    println!("{:?}", p1);
-    todo!()
+    (p1, 0)
 }
