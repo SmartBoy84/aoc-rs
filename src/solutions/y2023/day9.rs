@@ -1,9 +1,5 @@
-use std::iter;
-
-use crate::utils::parse_int;
-
 pub fn main(input: &str) -> (isize, isize) {
-    let input = input
+    input
         .split("\n")
         .map(|a| {
             a.split(" ")
@@ -20,7 +16,7 @@ pub fn main(input: &str) -> (isize, isize) {
                 back.push(a[0]);
             }
             back.reverse(); // I don't even care at this point, screw speed
-            for x in (0..a.len() - 1) {
+            for x in 0..a.len() - 1 {
                 a[x + 1] += a[x];
                 back[x + 1] -= back[x];
             }
@@ -30,7 +26,5 @@ pub fn main(input: &str) -> (isize, isize) {
             acc.0 += x.0;
             acc.1 += x.1;
             acc
-        });
-
-    (input.0, input.1)
+        })
 }

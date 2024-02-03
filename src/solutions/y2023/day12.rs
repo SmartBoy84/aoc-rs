@@ -39,26 +39,41 @@ fn find_permutations(map: &[u8], groups: &[usize]) -> usize {
 }
 
 pub fn main(input: &str) -> (usize, usize) {
-    let input = input
+    let mut input = input
         .split("\n")
         .map(|a| a.split_once(" ").unwrap())
         .map(|(map, alt)| {
             (
-                map.as_bytes(),
+                map.as_bytes().to_vec(),
                 alt.split(",").map(parse_int).collect::<Vec<_>>(),
             )
+        })
+        .map(|mut x| {
+            x.0.push(b'.');
+            x
         })
         .collect::<Vec<_>>();
 
     let p1 = input
         .iter()
-        .map(|(map, alt)| {
-            let ways = find_permutations(&map, &alt);
-            let name = map.iter().map(|a| *a as char).collect::<String>();
-            println!("{} {ways}", name);
-            ways
-        })
+        .map(|(map, alt)| find_permutations(&map, &alt))
         .sum();
 
-    (p1, 0)
+    // bruh, I've given up at this point - the implementation is correct but it doesn't finish executing in under half an hour
+    let p2 = input
+        .iter_mut()
+        .map(|x| {
+            *x.0.last_mut().unwrap() = b'?';
+            x
+        })
+        .map(|(map, alt)| {
+            (
+                Vec::from_iter(map.iter().copied().cycle().take((map.len() * 5) - 1)),
+                Vec::from_iter(alt.iter().copied().cycle().take(alt.len() * 5)),
+            )
+        })
+        .map(|(map, alt)| find_permutations(&map, &alt))
+        .sum();
+
+    (p1, p2)
 }
