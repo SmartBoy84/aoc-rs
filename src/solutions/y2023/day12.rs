@@ -77,15 +77,9 @@ pub fn main(input: &str) -> (usize, usize) {
 
     let p1 = input
         .iter()
-        // .map(|(map, alt)| {
-        //     let ways = find_permutations(&map, &alt, &mut cache);
-        //     println!("{:?} {:?} => {ways} ways", std::str::from_utf8(&map), alt);
-        //     ways
-        // })
         .map(|(map, alt)| find_permutations(&map, &alt, &mut cache))
         .sum();
 
-    // bruh, I've given up at this point - the implementation is correct but it doesn't finish executing in under half an hour
     let p2 = input
         .iter_mut()
         .map(|x| {
