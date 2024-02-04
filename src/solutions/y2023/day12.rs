@@ -1,7 +1,23 @@
 use crate::utils::parse_int;
+use hashbrown::HashMap;
 
 // I'm wary that recursion is rarely ideal but it's ok here since my inputs don't run the risk of filling up stack mem
-fn find_permutations(map: &[u8], groups: &[usize]) -> usize {
+fn find_permutations(
+    map: &[u8],
+    groups: &[usize],
+    cache: &mut HashMap<(String, Vec<usize>), usize>,
+) -> usize {
+    // this caching system is not my idea and I would never have thought to do it because I didn't think the puzzle input would require such memoization
+    // like it'd so absurd that this is used as much as it is; for it to be so, the input must have segments which are **exactly** identical!
+    // I hate that I'm too retarded to come up with anything better than this - 70ms is crazy
+    let key = (
+        unsafe { String::from_utf8_unchecked(map.to_vec()) },
+        groups.to_vec(),
+    );
+    if let Some(&ways) = cache.get(&key) {
+        return ways;
+    }
+
     let my_group = groups[0];
     let remaining = groups.iter().sum::<usize>() + groups.len() - 1;
     let mut ways = 0;
@@ -26,7 +42,7 @@ fn find_permutations(map: &[u8], groups: &[usize]) -> usize {
                     ways += 1
                 }
             } else {
-                ways += find_permutations(&map[end + 1..], &groups[1..])
+                ways += find_permutations(&map[end + 1..], &groups[1..], cache)
             }
         }
 
@@ -35,6 +51,9 @@ fn find_permutations(map: &[u8], groups: &[usize]) -> usize {
             break; // since this '#' must comprise this group
         }
     }
+
+    // def unique else function would've returned at the start (no threading happening)
+    cache.insert_unique_unchecked(key, ways);
     ways
 }
 
@@ -54,9 +73,16 @@ pub fn main(input: &str) -> (usize, usize) {
         })
         .collect::<Vec<_>>();
 
+    let mut cache = HashMap::new();
+
     let p1 = input
         .iter()
-        .map(|(map, alt)| find_permutations(&map, &alt))
+        // .map(|(map, alt)| {
+        //     let ways = find_permutations(&map, &alt, &mut cache);
+        //     println!("{:?} {:?} => {ways} ways", std::str::from_utf8(&map), alt);
+        //     ways
+        // })
+        .map(|(map, alt)| find_permutations(&map, &alt, &mut cache))
         .sum();
 
     // bruh, I've given up at this point - the implementation is correct but it doesn't finish executing in under half an hour
@@ -72,7 +98,7 @@ pub fn main(input: &str) -> (usize, usize) {
                 Vec::from_iter(alt.iter().copied().cycle().take(alt.len() * 5)),
             )
         })
-        .map(|(map, alt)| find_permutations(&map, &alt))
+        .map(|(map, alt)| find_permutations(&map, &alt, &mut cache))
         .sum();
 
     (p1, p2)
