@@ -9,4 +9,5 @@ pub mod day8;
 pub mod day9;
 pub mod day10; // part 2 incomplete (**HARD**)
 pub mod day11;
-pub mod day12; // god knows how long part 2 will take to execute
+pub mod day12; // UGH - so damn inefficient (~73ms to run)
+pub mod day13;
