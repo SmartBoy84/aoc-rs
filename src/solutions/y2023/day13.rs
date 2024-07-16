@@ -4,73 +4,97 @@ Part 2: 37478
 Time taken: 234.148µs
 */
 
-fn find_reflection(groups: &Vec<(usize, String)>) -> Option<(usize, usize)> {
-    let mut true_end = 0;
+#[derive(Debug)]
+struct Region {
+    lines: Vec<String>,
+}
 
-    let mut needle = 0;
-    let mut start = 0;
-    let mut max_end = None::<usize>;
-
-    while let Some((_, group)) = groups.get(needle) {
-        if let Some(right_end) = groups[needle + 1..]
-            .iter()
-            .find_map(|(check_idx, check_group)| (check_group == group).then_some(*check_idx))
-        {
-            if max_end.is_none() || !matches!(max_end.unwrap().checked_sub(right_end), Some(1)) {
-                true_end = right_end;
-                start = needle;
-            }
-            max_end = Some(right_end); // doesn't matter if this is to the left (ideal) OR to the right
-        } else {
-            max_end = None; // due to a violating group, this entire reflection must be negated
-        }
-        needle += 1;
-
-        // this occurs when the scope has been narrowed without finding a violating group such that we are at the centre [pair]
-        // *relies on the assumption that all reflections are of n-groups where n is even
-        if matches!(max_end, Some(x) if x == needle) {
-            return Some((start, true_end));
+impl Region {
+    fn new_hoz(region: &str) -> Self {
+        Self {
+            lines: region.split("\n").map(|a| a.to_string()).collect(),
         }
     }
-    return None; // this means we've gone up step-by-step and reached the end without finding ANY reflection
+
+    fn new_vert(region: &str) -> Self {
+        let mut cols = vec![];
+        for line in region.split("\n") {
+            if cols.len() == 0 {
+                cols.extend(std::iter::once(String::new()).cycle().take(line.len()))
+            }
+            for (n, c) in line.char_indices() {
+                cols[n].push(c);
+            }
+        }
+        Self { lines: cols }
+    }
+
+    fn find_sym_lin(&self) -> (Option<usize>, Option<usize>) {
+        self.find_symmetry(true, self.find_symmetry(false, (None, None)))
+    }
+
+    fn find_symmetry(
+        &self,
+        rev: bool,
+        (mut perfect, mut smudge): (Option<usize>, Option<usize>),
+    ) -> (Option<usize>, Option<usize>) {
+        let max = self.lines.len() / 2;
+
+        for i in 1..max + 1 {
+            if let (Some(_), Some(_)) = (perfect, smudge) {
+                break;
+            }
+
+            let first_half = &self.lines[if rev {
+                self.lines.len() - i..self.lines.len()
+            } else {
+                0..i
+            }];
+            let second_half = &self.lines[if rev {
+                self.lines.len() - (i * 2)..self.lines.len() - i
+            } else {
+                i..i * 2
+            }];
+
+            let diff = first_half
+                .iter()
+                .zip(second_half.iter().rev())
+                .map(|(l1, l2)| {
+                    l1.chars()
+                        .zip(l2.chars())
+                        .filter(|(c1, c2)| c1 != c2)
+                        .take(3) // don't really care about any more discrepancies
+                        .count()
+                })
+                .try_fold(0, |acc, x| match acc + x {
+                    2.. => None, // >= 2
+                    x => Some(x),
+                });
+
+            let index = if rev { self.lines.len() - i } else { i };
+            match diff {
+                Some(0) => perfect = Some(index),
+                Some(1) => smudge = Some(index), // a single char was different between the two divisons around the line of symmetry
+                _ => (),                         // more than two => don't care, move on
+            };
+        }
+        (perfect, smudge)
+    }
 }
 
 pub fn main(input: &str) -> (usize, usize) {
-    let line_len = input.lines().next().unwrap().len();
-
-    let hoz_lines = input
+    input
         .split("\n\n")
-        .map(|a| {
-            a.split("\n")
-                .map(|b| b.to_string())
-                .enumerate()
-                .collect::<Vec<_>>()
-        })
-        .collect::<Vec<_>>();
-
-    let vert_lines = hoz_lines
-        .iter()
-        .map(|group| {
-            group.iter().fold(
-                (0..line_len)
-                    .map(|idx| (idx, String::new()))
-                    .collect::<Vec<_>>(),
-                |mut acc, (_, x)| {
-                    for (idx, c) in x.char_indices() {
-                        acc[idx].1.push(c)
-                    }
-                    acc
-                },
+        .map(|region| {
+            (
+                Region::new_hoz(region).find_sym_lin(),
+                Region::new_vert(region).find_sym_lin(),
             )
         })
-        .collect::<Vec<_>>();
-
-println!("{:?}", vert_lines);
-
-    let horizontal = hoz_lines.iter().map(find_reflection).collect::<Vec<_>>();
-    let vertical = vert_lines.iter().map(find_reflection).collect::<Vec<_>>();
-
-    println!("Hoz: {:?} \n\nVert: {:?}", horizontal, vertical);
-
-    todo!()
+        .fold((0, 0), |(p1, p2), ((hp, hs), (vp, vs))| {
+            (
+                p1 + (hp.unwrap_or(0) * 100) + vp.unwrap_or(0),
+                p2 + (hs.unwrap_or(0) * 100) + vs.unwrap_or(0),
+            )
+        })
 }
