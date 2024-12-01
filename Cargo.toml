@@ -13,4 +13,5 @@ harness = false
 [dependencies]
 hashbrown = "0.14.3"
 itertools = "0.12.0"
+take-until = "0.2.0"
 ureq = "2.9.1"

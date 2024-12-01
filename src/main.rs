@@ -4,5 +4,5 @@ use advent::downloader::get_input;
 use advent::solutions::*;
 
 fn main() {
-    bench(y2023::day15::main, &get_input(15, 2023).unwrap())
+    bench(y2020::day1::main, &get_input(2020, 1).unwrap())
 }

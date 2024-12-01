@@ -1,5 +1,7 @@
+pub mod y2020;
 pub mod y2022;
 pub mod y2023;
+pub mod y2024;
 
 use std::{
     fmt::Debug,

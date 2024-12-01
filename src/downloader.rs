@@ -36,7 +36,7 @@ impl Display for InputGetError {
 
 impl std::error::Error for InputGetError {}
 
-pub fn get_input(day: u32, year: u32) -> AoCResult<String> {
+pub fn get_input(year: u32, day: u32) -> AoCResult<String> {
     let file_name = format!("{}/{}/{}.txt", STORAGE, year, day);
     let data = match fs::read_to_string(&file_name) {
         Ok(data) => data,

@@ -1,4 +1,4 @@
-// pub fn main(input: &str) -> (u64, u64);
+// pub fn main(input: &str) -> (usize, usize);
 
 pub mod day1;
 pub mod day2;
@@ -14,4 +14,5 @@ pub mod day11;
 pub mod day12; // UGH - so damn inefficient (~73ms to run)
 pub mod day13;
 pub mod day14; // W.I.P
-pub mod day15; // W.I.P
+pub mod day15;
+pub mod day16;
