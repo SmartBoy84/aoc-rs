@@ -26,8 +26,8 @@ pub fn main(input: &str) -> (usize, usize) {
         .iter()
         .filter(|(start, end, letter, pass)| {
             let b = pass.as_bytes();
-            &b[*start-1] == letter && &b[*end-1] == letter
+            (&b[*start-1] == letter) ^ (&b[*end-1] == letter)
         })
         .count();
-    (part1, 2)
+    (part1, part2)
 }

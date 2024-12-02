@@ -3,3 +3,4 @@
 // pub fn main(input: &str) -> (usize, usize);
 
 pub mod day1;
+pub mod day2;
