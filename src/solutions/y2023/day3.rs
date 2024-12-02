@@ -9,7 +9,7 @@ pub fn main(input: &str) -> (usize, usize) {
     let gear_or_part = input
         .iter()
         .enumerate()
-        .filter(|(_, &c)| !matches!(c, b'.' | b'0'..=b'9' | b'\n'))
+        .filter(|(_, c)| !matches!(c, b'.' | b'0'..=b'9' | b'\n'))
         .map(|(i, _)| {
             (-1..=1) // up, middle, bottom
                 .map(move |a| {

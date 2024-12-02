@@ -1,4 +1,5 @@
-// laid otu like this for crieterion benching
+#![feature(iter_array_chunks)] // used in 2020:2
+
 
 pub mod solutions;
 pub mod downloader;
