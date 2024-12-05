@@ -22,12 +22,6 @@ pub fn check(arr: &[i32], cur_ord: &mut Option<i32>) -> bool {
 }
 
 pub fn main(input: &str) -> (usize, usize) {
-    // ape_sol(input)
-    my_sol(input)
-    // part 1: 314, part 2: 373
-}
-
-pub fn my_sol(input: &str) -> (usize, usize) {
     let mut collector = Vec::new();
 
     let mut part1 = 0;
