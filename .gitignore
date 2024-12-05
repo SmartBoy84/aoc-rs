@@ -3,3 +3,4 @@ input
 input/*
 Cargo.lock
 API_KEY
+src/util

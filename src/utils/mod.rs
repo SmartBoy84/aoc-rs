@@ -1,3 +1,8 @@
+use parse::ParseOps;
+
+mod parse;
+mod integer;
+
 pub fn parse_int(input: &str) -> usize {
     input
         .as_bytes()

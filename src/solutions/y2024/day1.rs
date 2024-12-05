@@ -1,19 +1,23 @@
 use hashbrown::HashMap;
 
-use crate::utils;
+use crate::{
+    util::{iter::ChunkOps, parse::ParseOps},
+    utils,
+};
 
 pub fn main(input: &str) -> (usize, usize) {
     let (mut r, mut l): (Vec<_>, Vec<_>) = input
-        .split("\n")
-        .map(|a| a.split_once("   ").unwrap())
-        .map(|(r, l)| (utils::parse_int(r), utils::parse_int(l)))
+        .iter_unsigned::<usize>()
+        .chunk::<2>()
+        .map(|[a, b]| (a, b))
         .unzip();
+
     // man this is infuriating - this section takes up like 155us
 
     r.sort_unstable();
     l.sort_unstable();
 
-    let part1 = r.iter().zip(l.iter()).map(|(a, b)| a.abs_diff(*b)).sum();
+    let part1: usize = r.iter().zip(l.iter()).map(|(a, b)| a.abs_diff(*b)).sum();
 
     // solution 1
     // // let mut r = r.into_iter();
@@ -63,4 +67,7 @@ pub fn main(input: &str) -> (usize, usize) {
     // }
 
     (part1, part2)
+
+    // let i = parse(input);
+    // (part1(&i) as usize, part2(&i) as usize)
 }
