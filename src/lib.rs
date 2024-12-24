@@ -25,3 +25,6 @@
 pub mod solutions;
 pub mod downloader;
 pub mod utils;
+
+// I use maneatingape's solution when I want to work offline (get the right answer) + to compare speeds
+pub mod ape;
