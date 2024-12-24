@@ -1,6 +1,4 @@
-use crate::{util::parse::ParseOps, utils};
-
-use super::scratch::ape_sol;
+use crate::utils::parse::ParseOps;
 
 pub fn check(arr: &[i32], cur_ord: &mut Option<i32>) -> bool {
     let nex_ord = arr[1] - arr[0];
@@ -27,9 +25,8 @@ pub fn main(input: &str) -> (usize, usize) {
     let mut part1 = 0;
     let mut part2 = 0;
 
-    for report in input
-        .split('\n')
-        // .map(|l| l.split(' ').map(|a| utils::parse_int(a) as i32))
+    for report in input.split('\n')
+    // .map(|l| l.split(' ').map(|a| utils::parse_int(a) as i32))
     {
         collector.extend(report.iter_signed::<i32>());
 

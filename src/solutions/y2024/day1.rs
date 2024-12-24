@@ -1,14 +1,11 @@
 use hashbrown::HashMap;
 
-use crate::{
-    util::{iter::ChunkOps, parse::ParseOps},
-    utils,
-};
+use crate::utils::parse::ParseOps;
 
 pub fn main(input: &str) -> (usize, usize) {
     let (mut r, mut l): (Vec<_>, Vec<_>) = input
         .iter_unsigned::<usize>()
-        .chunk::<2>()
+        .array_chunks::<2>()
         .map(|[a, b]| (a, b))
         .unzip();
 

@@ -1,6 +1,4 @@
 
-use crate::util::parse::*;
-
 pub fn ape_sol(input: &str) -> (usize, usize) {
     let i = parse(input);
     (part1(&i) as usize, part2(&i) as usize)
